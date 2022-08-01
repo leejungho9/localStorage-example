@@ -42,11 +42,61 @@ class Router {
   }
 }
 
+class Storage {
+  saveTodo(id, todoContent) {
+    const todosData = this.getTodos();
+    todosData.push({ id, content: todoContent, status: 'TODO' });
+    localStorage.setItem('todos', JSON.stringify(todosData));
+  }
+  editTodo(id, todoContent, status = 'TODO') {
+    const todosData = this.getTodos();
+    const todoIndex = todosData.findIndex((todo) => todo.id == id);
+    const targetTodoData = todosData[todoIndex];
+    const editTodoData =
+      todoContent === ''
+        ? { ...targetTodoData, status }
+        : { ...targetTodoData, content: todoContent };
+    todosData.splice(todoIndex, 1, editTodoData);
+    localStorage.setItem('todos', JSON.stringify(todosData));
+  }
+  deleteTodo(id) {
+    const todosData = this.getTodos();
+    todosData.splice(
+      todosData.findIndex((todo) => todo.id == id),
+      1,
+    );
+    localStorage.setItem('todos', JSON.stringify(todosData));
+  }
+
+  getTodos() {
+    return localStorage.getItem('todos') === null
+      ? []
+      : JSON.parse(localStorage.getItem('todos'));
+  }
+}
+
 class TodoList {
-  constructor() {
+  stroage;
+  inputContainerEl;
+  inputAreaEl;
+  todoInputEl;
+  addBtnEl;
+  todoContainerEl;
+  todoListEl;
+  radioAreaEl;
+  filterRadioBtnEls;
+
+  constructor(storage) {
+    this.initStorage(storage);
     this.assignElement();
     this.addEvent();
+    this.loadSavedData();
   }
+
+  initStorage(storage) {
+    this.storage = storage;
+  }
+
   assignElement() {
     this.inputContainerEl = document.getElementById('input-container');
     this.inputAreaEl = this.inputContainerEl.querySelector('#input-area');
@@ -59,11 +109,22 @@ class TodoList {
       'input[name="filter"]',
     );
   }
+
   addEvent() {
     this.addBtnEl.addEventListener('click', this.onClickAddBtn.bind(this));
     this.todoListEl.addEventListener('click', this.onClickTodoList.bind(this));
     this.addRadioBtnEvent();
   }
+
+  loadSavedData() {
+    const todosData = this.storage.getTodos();
+    console.log(todosData);
+    for (const todoData of todosData) {
+      const { id, content, status } = todoData;
+      this.createTodoElement(id, content, status);
+    }
+  }
+
   addRadioBtnEvent() {
     for (const filterRadioBtnEl of this.filterRadioBtnEls) {
       filterRadioBtnEl.addEventListener(
@@ -121,6 +182,7 @@ class TodoList {
       todoDiv.remove();
     });
     todoDiv.classList.add('delete');
+    this.storage.deleteTodo(todoDiv.dataset.id);
   }
 
   editTodo(target) {
@@ -138,10 +200,19 @@ class TodoList {
 
     const todoInputEl = todoDiv.querySelector('input');
     todoInputEl.readOnly = true;
+
+    const { id } = todoDiv.dataset;
+    this.storage.editTodo(id, todoInputEl.value);
   }
   completeTodo(target) {
     const todoDiv = target.closest('.todo');
     todoDiv.classList.toggle('done');
+    const { id } = todoDiv.dataset;
+    this.storage.editTodo(
+      id,
+      '',
+      todoDiv.classList.contains('done') ? 'DONE' : 'TODO',
+    );
   }
 
   onClickAddBtn() {
@@ -149,14 +220,23 @@ class TodoList {
       alert('내용을 입력해주세요.');
       return;
     }
-
-    this.createTodoElement(this.todoInputEl.value);
+    const id = Date.now();
+    this.storage.saveTodo(id, this.todoInputEl.value);
+    this.createTodoElement(id, this.todoInputEl.value);
   }
-  createTodoElement(value) {
+
+  createTodoElement(id, value, status = null) {
     const todoDiv = document.createElement('div');
     todoDiv.classList.add('todo');
 
+    if (status === 'DONE') {
+      todoDiv.classList.add('done');
+    }
+
+    todoDiv.dataset.id = id;
+
     const todoContent = document.createElement('input');
+    console.log(value);
     todoContent.value = value;
     todoContent.readOnly = true;
     todoContent.classList.add('todo-item');
@@ -192,7 +272,7 @@ class TodoList {
 
 document.addEventListener('DOMContentLoaded', () => {
   const router = new Router();
-  const todoList = new TodoList();
+  const todoList = new TodoList(new Storage());
 
   const routeCallback = (status) => () => {
     todoList.filterTodo(status);
