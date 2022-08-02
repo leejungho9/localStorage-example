@@ -5,22 +5,33 @@
 }
 
 body {
-  background-color: skyblue;
+  background-color: white;
   color: white;
 }
 
 header {
+  border: 1px solid #3e3e3e;
+  border-bottom: none;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 600px;
   margin: auto;
-  padding: 0.5rem;
+  padding: 2.5rem;
   font-size: 2rem;
+
+  h1 {
+    font-size: 25px;
+    color: #3e3e3e;
+    border: 1px solid;
+    padding: 20px 150px;
+  }
 }
 
 .input-container {
-  height: 300px;
+  border-left: 1px solid #3e3e3e;
+  border-right: 1px solid #3e3e3e;
+  height: 200px;
   display: flex;
   align-items: center;
   width: 600px;
@@ -35,20 +46,24 @@ header {
 
     .todo-input {
       padding: 0.5rem;
-      font-size: 2rem;
+      font-size: 20px;
       border: none;
-      background: white;
+      background: transparent;
       width: 100%;
+      border-bottom: 1px solid #3e3e3e;
     }
-
+    .todo-input:focus {
+      outline: none;
+    }
     .todo-btn {
       padding: 0.5rem;
-      font-size: 2rem;
+      font-size: 1rem;
       border: none;
       background: white;
-      color: white;
-      background: green;
+      color: #3e3e3e;
+      background: transparent;
       cursor: pointer;
+      border-bottom: 1px solid #3e3e3e;
     }
   }
 }
@@ -59,16 +74,20 @@ header {
   align-items: center;
 
   .todo-list {
+    border: 1px solid #3e3e3e;
+    border-top: none;
     width: 600px;
+    height: 100vh;
 
     .todo {
       margin: 0.5rem;
-      background: white;
+      background: transparent;
       font-size: 1.5rem;
       color: black;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      border-bottom: 1px solid #3e3e3e;
 
       // !
       transition: 1s ease;
@@ -77,9 +96,10 @@ header {
         // !
         flex-grow: 1;
         border: none;
-        font-size: 1.5rem;
+        font-size: 20px;
         outline: none;
         padding: 0rem 0.5rem;
+        background: transparent;
 
         // !
         overflow-x: scroll;
@@ -103,8 +123,8 @@ header {
       }
 
       .delete-btn {
-        background: red;
-        color: white;
+        background: transparent;
+        color: #3e3e3e;
         border: none;
         padding: 1rem;
         cursor: pointer;
@@ -112,8 +132,8 @@ header {
       }
 
       .complete-btn {
-        background: blue;
-        color: white;
+        background: transparent;
+        color: #3e3e3e;
         border: none;
         padding: 1rem;
         cursor: pointer;
@@ -121,8 +141,8 @@ header {
       }
 
       .edit-btn {
-        background: black;
-        color: white;
+        background: transparent;
+        color: #3e3e3e;
         border: none;
         padding: 1rem;
         cursor: pointer;
@@ -163,7 +183,7 @@ header {
 .input-container .radio-area {
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
 
   input[type='radio'] {
     width: 0;
@@ -173,15 +193,15 @@ header {
 
     + label {
       padding: 0.8em 1.6em;
-      background-color: #fff;
+
       cursor: pointer;
       color: black;
       transition: 0.2s;
     }
 
     &:checked + label {
-      background-color: #b700ff;
-      color: #fff;
+      color: #3e3e3e;
+      font-weight: bold;
       border-color: #b700ff;
     }
   }
@@ -189,6 +209,9 @@ header {
 
 //!
 @media (max-width: 800px) {
+  header {
+    width: 100%;
+  }
   .input-container {
     width: 100%;
 

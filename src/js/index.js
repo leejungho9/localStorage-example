@@ -287,3 +287,8 @@ document.addEventListener('DOMContentLoaded', () => {
     .setNotFound(routeCallback('ALL'))
     .init();
 });
+
+window.addEventListener('load', function () {
+  const loadEl = document.getElementById('load');
+  loadEl.style = 'display : none';
+});
